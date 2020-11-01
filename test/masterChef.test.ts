@@ -88,10 +88,6 @@ describe("MasterChef", () => {
   }
 
   context("Basic infos", async () => {
-    it("has correct owner", async () => {
-      expect(await masterChef.owner()).to.eq(owner.address);
-    });
-
     it("has correct alpa token contract", async () => {
       expect(await masterChef.alpa()).to.eq(alpaToken.address);
     });
@@ -116,10 +112,6 @@ describe("MasterChef", () => {
       expect(await masterChef.startBlock()).to.eq(STARTING_BLOCK);
     });
 
-    it("ALPA owner is masterChef", async () => {
-      expect(await alpaToken.owner()).to.eq(masterChef.address);
-    });
-
     it("has correct empty alpaca energy", async () => {
       expect(await masterChef.EMPTY_ALPACA_ENERGY()).to.eq(1);
     });
@@ -129,6 +121,28 @@ describe("MasterChef", () => {
       expect(await masterChef.SAFE_MULTIPLIER()).to.eq(expectedMultiplier);
     });
   });
+
+  context("Access control", async () => {
+    it("has correct owner", async () => {
+      expect(await masterChef.owner()).to.eq(owner.address);
+    });
+
+    it("ALPA owner is masterChef", async () => {
+      expect(await alpaToken.owner()).to.eq(masterChef.address);
+    });
+
+    it("can transfer ownership", async () => {
+      await masterChef.transferOwnership(user1.address);
+      expect(await masterChef.owner()).to.eq(user1.address);
+    });
+
+    it("can transfer alpa ownership", async () => {
+      expect(await alpaToken.owner()).to.eq(masterChef.address);
+      
+      await masterChef.setAlpaOwner(user1.address);
+      expect(await alpaToken.owner()).to.eq(user1.address);
+    });
+  })
 
   context("Alpaca operator update energy", async () => {
     let testAlpaca1: ContractAlpaca;
