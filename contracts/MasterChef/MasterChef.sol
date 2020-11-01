@@ -393,6 +393,12 @@ contract MasterChef is Ownable, ERC1155Receiver, CryptoAlpacaEnergyListener {
         alpaPerBlock = _alpaPerBlock;
     }
 
+    // Transfer alpa owner to `_owner`
+    // For emergency use only
+    function setAlpaOwner(address _owner) external onlyOwner {
+        Ownable(address(alpa)).transferOwnership(_owner);
+    }
+
     /**
      * @dev Add a new lp to the pool. Can only be called by the owner
      */
